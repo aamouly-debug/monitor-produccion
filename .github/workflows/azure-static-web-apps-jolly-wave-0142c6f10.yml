@@ -44,7 +44,8 @@ jobs:
           app_location: "/"
           api_location: ""
           output_location: ""
-          app_build_command: "npm run build"
+          app_build_command: ""
+          
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
