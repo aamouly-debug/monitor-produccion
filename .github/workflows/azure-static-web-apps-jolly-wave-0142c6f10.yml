@@ -43,7 +43,7 @@ jobs:
           action: "upload"
           app_location: "/"
           api_location: ""
-          output_location: ""
+          output_location: "/"
           app_build_command: ""
           
           github_id_token: ${{ steps.idtoken.outputs.result }}
