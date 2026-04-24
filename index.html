@@ -1,10 +1,309 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Monitor Producción</title>
+    <meta charset="UTF-8" />
+    <title>Monitor de Producción</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        header {
+            background: #0f172a;
+            color: white;
+            padding: 18px 28px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .subtitulo {
+            margin-top: 4px;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .contenedor {
+            padding: 22px;
+        }
+
+        .barra {
+            background: white;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 9px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .estado {
+            margin-left: auto;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .grupo {
+            background: white;
+            margin-bottom: 22px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+        }
+
+        .grupo h2 {
+            margin: 0;
+            background: #1e3a8a;
+            color: white;
+            padding: 10px 14px;
+            font-size: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 6px 8px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8fafc;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        td.parametro {
+            text-align: left;
+            font-weight: bold;
+            background: #f9fafb;
+        }
+
+        .fuera-rango {
+            background: #fecaca;
+            color: #7f1d1d;
+            font-weight: bold;
+        }
+
+        .sin-dato {
+            background: #fde68a;
+            color: #78350f;
+        }
+
+        .sin-rango {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Monitor de Producción</h1>
-    <p>Proyecto iniciado correctamente</p>
+    <header>
+        <h1>Monitor de Producción</h1>
+        <div class="subtitulo">Control de calidad de proceso - Planta</div>
+    </header>
+
+    <div class="contenedor">
+        <div class="barra">
+            <button onclick="cargarDatos()">Actualizar</button>
+            <div class="estado" id="estado">Cargando datos...</div>
+        </div>
+
+        <div id="contenido"></div>
+    </div>
+
+    <script>
+        async function cargarDatos() {
+            const estado = document.getElementById("estado");
+            const contenido = document.getElementById("contenido");
+
+            estado.textContent = "Cargando datos...";
+            contenido.innerHTML = "";
+
+            try {
+                const respuesta = await fetch("/api/hello");
+
+                if (!respuesta.ok) {
+                    throw new Error("Error HTTP " + respuesta.status);
+                }
+
+                const datos = await respuesta.json();
+
+                if (!datos || datos.length === 0) {
+                    contenido.innerHTML = '<div class="error">No hay datos para mostrar.</div>';
+                    estado.textContent = "Sin datos";
+                    return;
+                }
+
+                renderizarMatriz(datos);
+
+                estado.textContent = "Última actualización: " + new Date().toLocaleTimeString();
+
+            } catch (error) {
+                contenido.innerHTML = '<div class="error">Error cargando datos: ' + error.message + '</div>';
+                estado.textContent = "Error";
+            }
+        }
+
+        function valorMostrar(fila) {
+            if (fila.ValorNum !== null && fila.ValorNum !== undefined) {
+                return fila.ValorNum;
+            }
+            if (fila.Valor !== null && fila.Valor !== undefined) {
+                return fila.Valor;
+            }
+            return "";
+        }
+
+        function claseCelda(fila) {
+            const valor = fila.ValorNum;
+            const min = fila.Ref_Min;
+            const max = fila.Ref_Max;
+
+            if (valor === null || valor === undefined) {
+                return "sin-dato";
+            }
+
+            if (min === null && max === null) {
+                return "sin-rango";
+            }
+
+            const minNum = min !== null ? Number(min) : null;
+            const maxNum = max !== null ? Number(max) : null;
+            const valorNum = Number(valor);
+
+            if (minNum !== null && valorNum < minNum) {
+                return "fuera-rango";
+            }
+
+            if (maxNum !== null && valorNum > maxNum) {
+                return "fuera-rango";
+            }
+
+            return "";
+        }
+
+        function renderizarMatriz(datos) {
+            const contenido = document.getElementById("contenido");
+
+            datos.sort((a, b) =>
+                (a.ORDENGRUPO ?? 999) - (b.ORDENGRUPO ?? 999) ||
+                (a.secuencia ?? 9999) - (b.secuencia ?? 9999) ||
+                (a.NroOrden ?? 9999) - (b.NroOrden ?? 9999)
+            );
+
+            const horas = [...new Map(
+                datos.map(d => [d.NroOrden, d.Hora_Registro])
+            ).entries()]
+            .sort((a, b) => Number(a[0]) - Number(b[0]));
+
+            const grupos = {};
+
+            datos.forEach(fila => {
+                if (!grupos[fila.Grupo]) {
+                    grupos[fila.Grupo] = {};
+                }
+
+                if (!grupos[fila.Grupo][fila.Parametro]) {
+                    grupos[fila.Grupo][fila.Parametro] = {
+                        unidad: fila.Unidad,
+                        min: fila.Ref_Min,
+                        max: fila.Ref_Max,
+                        valores: {},
+                        orden: fila.secuencia
+                    };
+                }
+
+                grupos[fila.Grupo][fila.Parametro].valores[fila.NroOrden] = fila;
+            });
+
+            let html = "";
+
+            Object.keys(grupos).forEach(grupo => {
+                html += `<div class="grupo">`;
+                html += `<h2>${grupo}</h2>`;
+                html += `<table>`;
+                html += `<thead><tr>`;
+                html += `<th>Parámetro</th>`;
+                html += `<th>Unidad</th>`;
+                html += `<th>Min</th>`;
+                html += `<th>Max</th>`;
+
+                horas.forEach(([nro, hora]) => {
+                    html += `<th>${formatearHora(hora)}</th>`;
+                });
+
+                html += `</tr></thead><tbody>`;
+
+                Object.keys(grupos[grupo]).forEach(parametro => {
+                    const item = grupos[grupo][parametro];
+
+                    html += `<tr>`;
+                    html += `<td class="parametro">${parametro}</td>`;
+                    html += `<td>${item.unidad ?? ""}</td>`;
+                    html += `<td>${item.min ?? ""}</td>`;
+                    html += `<td>${item.max ?? ""}</td>`;
+
+                    horas.forEach(([nro]) => {
+                        const fila = item.valores[nro];
+
+                        if (!fila) {
+                            html += `<td class="sin-dato"></td>`;
+                        } else {
+                            html += `<td class="${claseCelda(fila)}">${valorMostrar(fila)}</td>`;
+                        }
+                    });
+
+                    html += `</tr>`;
+                });
+
+                html += `</tbody></table></div>`;
+            });
+
+            contenido.innerHTML = html;
+        }
+
+        function formatearHora(hora) {
+            if (!hora) return "";
+            return String(hora).substring(0, 5);
+        }
+
+        cargarDatos();
+    </script>
 </body>
 </html>
