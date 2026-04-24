@@ -1,12 +1,14 @@
-const sql = require('mssql');
-
 module.exports = async function (context, req) {
     try {
-        const config = {
-            connectionString: process.env.SQL_CONNECTION_STRING
-        };
+        const sql = require('mssql');
 
-        await sql.connect(config);
+        const connectionString = process.env.SQL_CONNECTION_STRING;
+
+        if (!connectionString) {
+            throw new Error("No existe la variable SQL_CONNECTION_STRING en Azure.");
+        }
+
+        await sql.connect(connectionString);
 
         const result = await sql.query(`
             SELECT TOP 10
@@ -24,13 +26,19 @@ module.exports = async function (context, req) {
 
         context.res = {
             status: 200,
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: result.recordset
         };
 
     } catch (error) {
         context.res = {
             status: 500,
-            body: error.message
+            headers: {
+                "Content-Type": "text/plain"
+            },
+            body: "ERROR API: " + error.message
         };
     }
 };
