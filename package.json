@@ -2,7 +2,10 @@
   "name": "monitor-produccion",
   "version": "1.0.0",
   "private": true,
+  "dependencies": {
+    "mssql": "^10.0.0"
+  },
   "scripts": {
-    "build": "echo No build required"
+    "build": "echo build"
   }
 }
