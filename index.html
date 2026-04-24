@@ -298,10 +298,17 @@
             contenido.innerHTML = html;
         }
 
-        function formatearHora(hora) {
-            if (!hora) return "";
-            return String(hora).substring(0, 5);
-        }
+       function formatearHora(hora) {
+    if (!hora) return "";
+
+    const texto = String(hora);
+
+    if (texto.includes("T")) {
+        return texto.split("T")[1].substring(0, 5);
+    }
+
+    return texto.substring(0, 5);
+}
 
         cargarDatos();
     </script>
