@@ -182,7 +182,7 @@
 async function cargarDatos() {
     const estado = document.getElementById("estado");
     const contenido = document.getElementById("contenido");
-    document.getElementById("fecha").value = fecha;
+    document.getElementById("fecha").valueAsDate = new Date(fecha);
     document.getElementById("turno").value = turno;
     document.getElementById("grupo").value = "Todos";
 
