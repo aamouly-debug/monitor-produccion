@@ -139,10 +139,41 @@
     </header>
 
     <div class="contenedor">
-        <div class="barra">
-            <button onclick="cargarDatos()">Actualizar</button>
-            <div class="estado" id="estado">Cargando datos...</div>
-        </div>
+<div class="barra">
+    <label>
+        Fecha:
+        <input type="date" id="fecha">
+    </label>
+
+    <label>
+        Turno:
+        <select id="turno">
+            <option value="Turno 1">Turno 1</option>
+            <option value="Turno 2">Turno 2</option>
+        </select>
+    </label>
+
+    <label>
+        Grupo:
+        <select id="grupo">
+            <option value="Todos">Todos</option>
+            <option value="Gral">Gral</option>
+            <option value="COCEDOR">COCEDOR</option>
+            <option value="DRENADOR">DRENADOR</option>
+            <option value="PRENSA">PRENSA</option>
+            <option value="ACEITE">ACEITE</option>
+            <option value="SECADOR">SECADOR</option>
+            <option value="EVAPORADOR">EVAPORADOR</option>
+            <option value="SILOS">SILOS</option>
+            <option value="ENSAQUE">ENSAQUE</option>
+        </select>
+    </label>
+
+    <button onclick="cargarDatosDesdeFiltros()">Mostrar datos</button>
+    <button onclick="cargarDatos()">Último turno</button>
+
+    <div class="estado" id="estado">Cargando datos...</div>
+</div>
 
         <div id="contenido"></div>
     </div>
