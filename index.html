@@ -129,6 +129,15 @@
             border-radius: 8px;
             margin-bottom: 16px;
         }
+    .btn-grupo {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+    .btn-grupo.activo {
+    background: #2563eb;
+    color: white;
+}
     </style>
 </head>
 
@@ -175,14 +184,14 @@
     <div class="estado" id="estado">Cargando datos...</div>
 </div>
  <div class="barra" id="controles-grupos">
-    <button onclick="toggleGrupo('COCEDOR')">COCEDOR</button>
-    <button onclick="toggleGrupo('DRENADOR')">DRENADOR</button>
-    <button onclick="toggleGrupo('PRENSA')">PRENSA</button>
-    <button onclick="toggleGrupo('ACEITE')">ACEITE</button>
-    <button onclick="toggleGrupo('SECADOR')">SECADOR</button>
-    <button onclick="toggleGrupo('EVAPORADOR')">EVAPORADOR</button>
-    <button onclick="toggleGrupo('SILOS')">SILOS</button>
-    <button onclick="toggleGrupo('ENSAQUE')">ENSAQUE</button>
+   <button class="btn-grupo" onclick="toggleGrupo(this, 'COCEDOR')">COCEDOR</button>
+<button class="btn-grupo" onclick="toggleGrupo(this, 'DRENADOR')">DRENADOR</button>
+<button class="btn-grupo" onclick="toggleGrupo(this, 'PRENSA')">PRENSA</button>
+<button class="btn-grupo" onclick="toggleGrupo(this, 'ACEITE')">ACEITE</button>
+<button class="btn-grupo" onclick="toggleGrupo(this, 'SECADOR')">SECADOR</button>
+<button class="btn-grupo" onclick="toggleGrupo(this, 'EVAPORADOR')">EVAPORADOR</button>
+<button class="btn-grupo" onclick="toggleGrupo(this, 'SILOS')">SILOS</button>
+<button class="btn-grupo" onclick="toggleGrupo(this, 'ENSAQUE')">ENSAQUE</button>
 </div>       
 
         <div id="contenido"></div>
@@ -412,16 +421,16 @@ async function cargarDatosDesdeFiltros() {
 
     return texto.substring(0, 5);
 }
-function toggleGrupo(nombreGrupo) {
+function toggleGrupo(btn, nombreGrupo) {
     const bloques = document.querySelectorAll(`[data-grupo="${nombreGrupo}"]`);
 
+    const activo = btn.classList.contains("activo");
+
     bloques.forEach(bloque => {
-        if (bloque.style.display === "none") {
-            bloque.style.display = "";
-        } else {
-            bloque.style.display = "none";
-        }
+        bloque.style.display = activo ? "" : "none";
     });
+
+    btn.classList.toggle("activo");
 }
         cargarDatos();
     </script>
