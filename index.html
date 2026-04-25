@@ -4,44 +4,79 @@
     <meta charset="UTF-8" />
     <title>Monitor de Producción</title>
     <style>
+        :root {
+            --azul: #0f172a;
+            --azul-panel: #243f91;
+            --rojo: #d90429;
+            --fondo: #f3f4f6;
+            --borde: #dfe3ea;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f3f4f6;
+            background: var(--fondo);
             color: #111827;
         }
 
         header {
-            background: #0f172a;
+            background: var(--azul);
             color: white;
-            padding: 18px 28px;
+            padding: 16px 28px;
+        }
+
+        .header-titulo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            height: 64px;
+            width: auto;
+            background: white;
+            border-radius: 6px;
+            padding: 4px;
         }
 
         header h1 {
             margin: 0;
             font-size: 28px;
+            line-height: 1.1;
         }
 
         .subtitulo {
-            margin-top: 4px;
+            margin-top: 5px;
             color: #cbd5e1;
             font-size: 14px;
         }
 
         .contenedor {
-            padding: 22px;
+            padding: 18px;
         }
 
         .barra {
             background: white;
             padding: 16px;
             border-radius: 10px;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             display: flex;
             gap: 12px;
             align-items: center;
             flex-wrap: wrap;
             box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+        }
+
+        label {
+            font-size: 15px;
+        }
+
+        input, select {
+            height: 28px;
+            border: 1px solid #9ca3af;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 14px;
         }
 
         button {
@@ -61,43 +96,93 @@
         .estado {
             margin-left: auto;
             font-size: 13px;
-            color: #475569;
+            color: #334155;
+        }
+
+        .btn-grupo {
+            background: #e5e7eb;
+            color: #111827;
+            min-width: 96px;
+        }
+
+        .btn-grupo.activo {
+            background: #2563eb;
+            color: white;
+        }
+
+        .contenedor-bloques {
+            background: #f3f4f6;
+            padding: 0 12px 12px 12px;
+            margin-top: 12px;
+            border-radius: 10px;
+        }
+
+        .linea-roja {
+            height: 5px;
+            background: var(--rojo);
+            margin: 14px 0 10px 0;
         }
 
         .grupo {
             background: white;
-            margin-bottom: 22px;
+            margin-bottom: 24px;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+            border: 1px solid #e5e7eb;
         }
 
-        .grupo h2 {
-            margin: 0;
-            background: #1e3a8a;
+        .grupo-header {
+            background: var(--azul-panel);
             color: white;
-            padding: 10px 14px;
-            font-size: 18px;
+            padding: 11px 16px;
+            font-weight: bold;
+            font-size: 17px;
+            letter-spacing: 1px;
+            border-bottom: 4px solid var(--rojo);
+        }
+
+        .grupo-body {
+            padding: 8px;
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
+            table-layout: fixed;
         }
 
         th, td {
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--borde);
             padding: 6px 8px;
             text-align: center;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         th {
             background: #f8fafc;
-            position: sticky;
-            top: 0;
-            z-index: 1;
+            font-weight: bold;
+        }
+
+        .col-parametro {
+            width: 240px;
+        }
+
+        .col-unidad {
+            width: 70px;
+        }
+
+        .col-min, .col-max {
+            width: 70px;
+        }
+
+        .col-hora {
+            width: calc((100% - 450px) / 12);
+            min-width: 70px;
         }
 
         td.parametro {
@@ -118,7 +203,7 @@
         }
 
         .sin-rango {
-            background: #f1f5f9;
+            background: #eef2f7;
             color: #334155;
         }
 
@@ -129,223 +214,169 @@
             border-radius: 8px;
             margin-bottom: 16px;
         }
-    .btn-grupo {
-    background: #e5e7eb;
-    color: #111827;
-}
-
-    .btn-grupo.activo {
-    background: #2563eb;
-    color: white;
-}
- .grupo {
-    margin-bottom: 24px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    background: white;
-}
-
-.grupo-header {
-    background: #1e3a8a;
-    color: white;
-    padding: 12px 16px;
-    font-weight: bold;
-    font-size: 16px;
-    letter-spacing: 1px;
-}
-
-.grupo-body {
-    padding: 10px;
-}
- .contenedor-bloques {
-    background: #f3f4f6;
-    padding: 15px;
-    margin: 15px;
-    border-radius: 10px;
-}
-
-.linea-roja {
-    height: 5px;
-    background: #d90429;
-    margin-bottom: 10px;
-}
-    .header-titulo {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.logo {
-    height: 50px;
-}
-
-.subtitulo {
-    font-size: 12px;
-    opacity: 0.7;
-}
     </style>
 </head>
 
 <body>
     <header>
         <div class="header-titulo">
-    <img src="logo.png" class="logo">
-    <div>
-        <h1>Monitor de Producción</h1>
-        <div class="subtitulo">Control de calidad de proceso - Planta</div>
-    </div>
-</div>
-        <div class="subtitulo">Control de calidad de proceso - Planta</div>
+            <img src="logo.png" class="logo" alt="Pacífico Industrial">
+            <div>
+                <h1>Monitor de Producción</h1>
+                <div class="subtitulo">Control de calidad de proceso - Planta</div>
+            </div>
+        </div>
     </header>
 
     <div class="contenedor">
-<div class="barra">
-    <label>
-        Fecha:
-        <input type="date" id="fecha">
-    </label>
+        <div class="barra">
+            <label>
+                Fecha:
+                <input type="date" id="fecha">
+            </label>
 
-    <label>
-        Turno:
-        <select id="turno">
-            <option value="Turno 1">Turno 1</option>
-            <option value="Turno 2">Turno 2</option>
-        </select>
-    </label>
+            <label>
+                Turno:
+                <select id="turno">
+                    <option value="Turno 1">Turno 1</option>
+                    <option value="Turno 2">Turno 2</option>
+                </select>
+            </label>
 
-    <label>
-        Grupo:
-        <select id="grupo">
-            <option value="Todos">Todos</option>
-            <option value="Gral">Gral</option>
-            <option value="COCEDOR">COCEDOR</option>
-            <option value="DRENADOR">DRENADOR</option>
-            <option value="PRENSA">PRENSA</option>
-            <option value="ACEITE">ACEITE</option>
-            <option value="SECADOR">SECADOR</option>
-            <option value="EVAPORADOR">EVAPORADOR</option>
-            <option value="SILOS">SILOS</option>
-            <option value="ENSAQUE">ENSAQUE</option>
-        </select>
-    </label>
+            <label>
+                Grupo:
+                <select id="grupo">
+                    <option value="Todos">Todos</option>
+                    <option value="Gral">Gral</option>
+                    <option value="COCEDOR">COCEDOR</option>
+                    <option value="DRENADOR">DRENADOR</option>
+                    <option value="PRENSA">PRENSA</option>
+                    <option value="ACEITE">ACEITE</option>
+                    <option value="SECADOR">SECADOR</option>
+                    <option value="EVAPORADOR">EVAPORADOR</option>
+                    <option value="SILOS">SILOS</option>
+                    <option value="ENSAQUE">ENSAQUE</option>
+                </select>
+            </label>
 
-    <button onclick="cargarDatosDesdeFiltros()">Mostrar datos</button>
-    <button onclick="cargarDatos()">Último turno</button>
+            <button onclick="cargarDatosDesdeFiltros()">Mostrar datos</button>
+            <button onclick="cargarDatos()">Último turno</button>
 
-    <div class="estado" id="estado">Cargando datos...</div>
-</div>
- <div class="barra" id="controles-grupos">
-   <button class="btn-grupo" onclick="toggleGrupo(this, 'COCEDOR')">COCEDOR</button>
-<button class="btn-grupo" onclick="toggleGrupo(this, 'DRENADOR')">DRENADOR</button>
-<button class="btn-grupo" onclick="toggleGrupo(this, 'PRENSA')">PRENSA</button>
-<button class="btn-grupo" onclick="toggleGrupo(this, 'ACEITE')">ACEITE</button>
-<button class="btn-grupo" onclick="toggleGrupo(this, 'SECADOR')">SECADOR</button>
-<button class="btn-grupo" onclick="toggleGrupo(this, 'EVAPORADOR')">EVAPORADOR</button>
-<button class="btn-grupo" onclick="toggleGrupo(this, 'SILOS')">SILOS</button>
-<button class="btn-grupo" onclick="toggleGrupo(this, 'ENSAQUE')">ENSAQUE</button>
-</div>       
+            <div class="estado" id="estado">Cargando datos...</div>
+        </div>
+
+        <div class="barra" id="controles-grupos">
+            <button class="btn-grupo activo" onclick="toggleGrupo(this, 'COCEDOR')">COCEDOR</button>
+            <button class="btn-grupo activo" onclick="toggleGrupo(this, 'DRENADOR')">DRENADOR</button>
+            <button class="btn-grupo activo" onclick="toggleGrupo(this, 'PRENSA')">PRENSA</button>
+            <button class="btn-grupo activo" onclick="toggleGrupo(this, 'ACEITE')">ACEITE</button>
+            <button class="btn-grupo activo" onclick="toggleGrupo(this, 'SECADOR')">SECADOR</button>
+            <button class="btn-grupo activo" onclick="toggleGrupo(this, 'EVAPORADOR')">EVAPORADOR</button>
+            <button class="btn-grupo activo" onclick="toggleGrupo(this, 'SILOS')">SILOS</button>
+            <button class="btn-grupo activo" onclick="toggleGrupo(this, 'ENSAQUE')">ENSAQUE</button>
+        </div>
 
         <div class="contenedor-bloques">
-    <div class="linea-roja"></div>
-    <div id="contenido">
+            <div class="linea-roja"></div>
+            <div id="contenido"></div>
+        </div>
     </div>
-</div>
+
     <script>
-async function cargarDatos() {
-    const estado = document.getElementById("estado");
-    const contenido = document.getElementById("contenido");
+        async function cargarDatos() {
+            const estado = document.getElementById("estado");
+            const contenido = document.getElementById("contenido");
 
-    estado.textContent = "Cargando datos...";
-    contenido.innerHTML = "";
+            estado.textContent = "Cargando datos...";
+            contenido.innerHTML = "";
 
-    try {
-        // 1. Obtener último turno
-        const resTurno = await fetch("/api/hello");
+            try {
+                const resTurno = await fetch("/api/hello");
 
-        if (!resTurno.ok) {
-            throw new Error("Error HTTP " + resTurno.status);
+                if (!resTurno.ok) {
+                    throw new Error("Error HTTP " + resTurno.status);
+                }
+
+                const turnoData = await resTurno.json();
+
+                const fecha = turnoData.FechaCC.split("T")[0];
+                const turno = turnoData.Turno;
+
+                document.getElementById("fecha").value = fecha;
+                document.getElementById("turno").value = turno;
+                document.getElementById("grupo").value = "Todos";
+
+                const respuesta = await fetch(
+                    `/api/datos?fecha=${fecha}&turno=${encodeURIComponent(turno)}&grupo=Todos`
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error("Error HTTP " + respuesta.status);
+                }
+
+                const datos = await respuesta.json();
+
+                if (!datos || datos.length === 0) {
+                    contenido.innerHTML = '<div class="error">No hay datos para mostrar.</div>';
+                    estado.textContent = "Sin datos";
+                    return;
+                }
+
+                resetBotonesGrupo();
+                renderizarMatriz(datos);
+
+                estado.textContent = `Mostrando: ${fecha} - ${turno} - Todos`;
+
+            } catch (error) {
+                contenido.innerHTML = '<div class="error">Error cargando datos: ' + error.message + '</div>';
+                estado.textContent = "Error";
+            }
         }
 
-        const turnoData = await resTurno.json();
+        async function cargarDatosDesdeFiltros() {
+            const estado = document.getElementById("estado");
+            const contenido = document.getElementById("contenido");
 
-        const fecha = turnoData.FechaCC.split("T")[0];
-        const turno = turnoData.Turno;
+            const fecha = document.getElementById("fecha").value;
+            const turno = document.getElementById("turno").value;
+            const grupo = document.getElementById("grupo").value;
 
-        // 2. Sincronizar segmentadores visuales
-        document.getElementById("fecha").value = fecha;
-        document.getElementById("turno").value = turno;
-        document.getElementById("grupo").value = "Todos";
+            if (!fecha || !turno) {
+                alert("Selecciona fecha y turno.");
+                return;
+            }
 
-        // 3. Traer datos reales
-        const respuesta = await fetch(
-            `/api/datos?fecha=${fecha}&turno=${encodeURIComponent(turno)}&grupo=Todos`
-        );
+            estado.textContent = "Cargando datos...";
+            contenido.innerHTML = "";
 
-        if (!respuesta.ok) {
-            throw new Error("Error HTTP " + respuesta.status);
+            try {
+                const respuesta = await fetch(
+                    `/api/datos?fecha=${fecha}&turno=${encodeURIComponent(turno)}&grupo=${encodeURIComponent(grupo)}`
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error("Error HTTP " + respuesta.status);
+                }
+
+                const datos = await respuesta.json();
+
+                if (!datos || datos.length === 0) {
+                    contenido.innerHTML = '<div class="error">No hay datos para mostrar.</div>';
+                    estado.textContent = "Sin datos";
+                    return;
+                }
+
+                resetBotonesGrupo();
+                renderizarMatriz(datos);
+
+                estado.textContent = `Mostrando: ${fecha} - ${turno} - ${grupo}`;
+
+            } catch (error) {
+                contenido.innerHTML = '<div class="error">Error cargando datos: ' + error.message + '</div>';
+                estado.textContent = "Error";
+            }
         }
 
-        const datos = await respuesta.json();
-
-        if (!datos || datos.length === 0) {
-            contenido.innerHTML = '<div class="error">No hay datos para mostrar.</div>';
-            estado.textContent = "Sin datos";
-            return;
-        }
-
-        renderizarMatriz(datos);
-
-        estado.textContent = `Mostrando: ${fecha} - ${turno}`;
-
-    } catch (error) {
-        contenido.innerHTML = '<div class="error">Error cargando datos: ' + error.message + '</div>';
-        estado.textContent = "Error";
-    }
-}
-async function cargarDatosDesdeFiltros() {
-    const estado = document.getElementById("estado");
-    const contenido = document.getElementById("contenido");
-
-    const fecha = document.getElementById("fecha").value;
-    const turno = document.getElementById("turno").value;
-    const grupo = document.getElementById("grupo").value;
-
-    if (!fecha || !turno) {
-        alert("Selecciona fecha y turno.");
-        return;
-    }
-
-    estado.textContent = "Cargando datos...";
-    contenido.innerHTML = "";
-
-    try {
-        const respuesta = await fetch(
-            `/api/datos?fecha=${fecha}&turno=${encodeURIComponent(turno)}&grupo=${encodeURIComponent(grupo)}`
-        );
-
-        if (!respuesta.ok) {
-            throw new Error("Error HTTP " + respuesta.status);
-        }
-
-        const datos = await respuesta.json();
-
-        if (!datos || datos.length === 0) {
-            contenido.innerHTML = '<div class="error">No hay datos para mostrar.</div>';
-            estado.textContent = "Sin datos";
-            return;
-        }
-
-        renderizarMatriz(datos);
-
-        estado.textContent = `Mostrando: ${fecha} - ${turno} - ${grupo}`;
-
-    } catch (error) {
-        contenido.innerHTML = '<div class="error">Error cargando datos: ' + error.message + '</div>';
-        estado.textContent = "Error";
-    }
-}
-        
         function valorMostrar(fila) {
             if (fila.ValorNum !== null && fila.ValorNum !== undefined) {
                 return fila.ValorNum;
@@ -393,10 +424,20 @@ async function cargarDatosDesdeFiltros() {
                 (a.NroOrden ?? 9999) - (b.NroOrden ?? 9999)
             );
 
-            const horas = [...new Map(
-                datos.map(d => [d.NroOrden, d.Hora_Registro])
-            ).entries()]
-            .sort((a, b) => Number(a[0]) - Number(b[0]));
+            const horasMap = new Map();
+
+            datos.forEach(d => {
+                if (d.NroOrden !== null && d.NroOrden !== undefined) {
+                    if (!horasMap.has(Number(d.NroOrden))) {
+                        horasMap.set(Number(d.NroOrden), d.Hora_Registro);
+                    }
+                }
+            });
+
+            const horas = [];
+            for (let i = 1; i <= 12; i++) {
+                horas.push([i, horasMap.get(i) || ""]);
+            }
 
             const grupos = {};
 
@@ -415,25 +456,24 @@ async function cargarDatosDesdeFiltros() {
                     };
                 }
 
-                grupos[fila.Grupo][fila.Parametro].valores[fila.NroOrden] = fila;
+                grupos[fila.Grupo][fila.Parametro].valores[Number(fila.NroOrden)] = fila;
             });
 
             let html = "";
 
             Object.keys(grupos).forEach(grupo => {
-                html += `<div class="grupo" data-grupo="${grupo}">
-                <div class="grupo-header">${grupo}</div>
-                <div class="grupo-body">`;
-                html += `<h2>${grupo}</h2>`;
+                html += `<div class="grupo" data-grupo="${grupo}">`;
+                html += `<div class="grupo-header">${grupo}</div>`;
+                html += `<div class="grupo-body">`;
                 html += `<table>`;
                 html += `<thead><tr>`;
-                html += `<th>Parámetro</th>`;
-                html += `<th>Unidad</th>`;
-                html += `<th>Min</th>`;
-                html += `<th>Max</th>`;
+                html += `<th class="col-parametro">Parámetro</th>`;
+                html += `<th class="col-unidad">Unidad</th>`;
+                html += `<th class="col-min">Min</th>`;
+                html += `<th class="col-max">Max</th>`;
 
                 horas.forEach(([nro, hora]) => {
-                    html += `<th>${formatearHora(hora)}</th>`;
+                    html += `<th class="col-hora">${formatearHora(hora)}</th>`;
                 });
 
                 html += `</tr></thead><tbody>`;
@@ -451,7 +491,7 @@ async function cargarDatosDesdeFiltros() {
                         const fila = item.valores[nro];
 
                         if (!fila) {
-                            html += `<td class="sin-dato"></td>`;
+                            html += `<td></td>`;
                         } else {
                             html += `<td class="${claseCelda(fila)}">${valorMostrar(fila)}</td>`;
                         }
@@ -466,28 +506,35 @@ async function cargarDatosDesdeFiltros() {
             contenido.innerHTML = html;
         }
 
-       function formatearHora(hora) {
-    if (!hora) return "";
+        function formatearHora(hora) {
+            if (!hora) return "";
 
-    const texto = String(hora);
+            const texto = String(hora);
 
-    if (texto.includes("T")) {
-        return texto.split("T")[1].substring(0, 5);
-    }
+            if (texto.includes("T")) {
+                return texto.split("T")[1].substring(0, 5);
+            }
 
-    return texto.substring(0, 5);
-}
-function toggleGrupo(btn, nombreGrupo) {
-    const bloques = document.querySelectorAll(`[data-grupo="${nombreGrupo}"]`);
+            return texto.substring(0, 5);
+        }
 
-    const activo = btn.classList.contains("activo");
+        function toggleGrupo(btn, nombreGrupo) {
+            const bloques = document.querySelectorAll(`[data-grupo="${nombreGrupo}"]`);
+            const activo = btn.classList.contains("activo");
 
-    bloques.forEach(bloque => {
-        bloque.style.display = activo ? "" : "none";
-    });
+            bloques.forEach(bloque => {
+                bloque.style.display = activo ? "none" : "";
+            });
 
-    btn.classList.toggle("activo");
-}
+            btn.classList.toggle("activo");
+        }
+
+        function resetBotonesGrupo() {
+            document.querySelectorAll(".btn-grupo").forEach(btn => {
+                btn.classList.add("activo");
+            });
+        }
+
         cargarDatos();
     </script>
 </body>
