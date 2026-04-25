@@ -182,9 +182,6 @@
 async function cargarDatos() {
     const estado = document.getElementById("estado");
     const contenido = document.getElementById("contenido");
-    document.getElementById("fecha").valueAsDate = new Date(fecha);
-    document.getElementById("turno").value = turno;
-    document.getElementById("grupo").value = "Todos";
 
     estado.textContent = "Cargando datos...";
     contenido.innerHTML = "";
@@ -192,14 +189,22 @@ async function cargarDatos() {
     try {
         // 1. Obtener último turno
         const resTurno = await fetch("/api/hello");
+
+        if (!resTurno.ok) {
+            throw new Error("Error HTTP " + resTurno.status);
+        }
+
         const turnoData = await resTurno.json();
 
         const fecha = turnoData.FechaCC.split("T")[0];
         const turno = turnoData.Turno;
 
-        console.log("Usando:", fecha, turno);
+        // 2. Sincronizar segmentadores visuales
+        document.getElementById("fecha").value = fecha;
+        document.getElementById("turno").value = turno;
+        document.getElementById("grupo").value = "Todos";
 
-        // 2. Traer datos reales
+        // 3. Traer datos reales
         const respuesta = await fetch(
             `/api/datos?fecha=${fecha}&turno=${encodeURIComponent(turno)}&grupo=Todos`
         );
@@ -218,7 +223,7 @@ async function cargarDatos() {
 
         renderizarMatriz(datos);
 
-        estado.textContent = `Última actualización: ${fecha} - ${turno}`;
+        estado.textContent = `Mostrando: ${fecha} - ${turno}`;
 
     } catch (error) {
         contenido.innerHTML = '<div class="error">Error cargando datos: ' + error.message + '</div>';
