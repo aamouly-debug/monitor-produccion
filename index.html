@@ -148,37 +148,49 @@
     </div>
 
     <script>
-        async function cargarDatos() {
-            const estado = document.getElementById("estado");
-            const contenido = document.getElementById("contenido");
+async function cargarDatos() {
+    const estado = document.getElementById("estado");
+    const contenido = document.getElementById("contenido");
 
-            estado.textContent = "Cargando datos...";
-            contenido.innerHTML = "";
+    estado.textContent = "Cargando datos...";
+    contenido.innerHTML = "";
 
-            try {
-                const respuesta = await fetch("/api/hello");
+    try {
+        // 1. Obtener último turno
+        const resTurno = await fetch("/api/hello");
+        const turnoData = await resTurno.json();
 
-                if (!respuesta.ok) {
-                    throw new Error("Error HTTP " + respuesta.status);
-                }
+        const fecha = turnoData.FechaCC.split("T")[0];
+        const turno = turnoData.Turno;
 
-                const datos = await respuesta.json();
+        console.log("Usando:", fecha, turno);
 
-                if (!datos || datos.length === 0) {
-                    contenido.innerHTML = '<div class="error">No hay datos para mostrar.</div>';
-                    estado.textContent = "Sin datos";
-                    return;
-                }
+        // 2. Traer datos reales
+        const respuesta = await fetch(
+            `/api/datos?fecha=${fecha}&turno=${encodeURIComponent(turno)}&grupo=Todos`
+        );
 
-                renderizarMatriz(datos);
-
-                estado.textContent = "Última actualización: " + new Date().toLocaleTimeString();
-
-            } catch (error) {
-                contenido.innerHTML = '<div class="error">Error cargando datos: ' + error.message + '</div>';
-                estado.textContent = "Error";
-            }
+        if (!respuesta.ok) {
+            throw new Error("Error HTTP " + respuesta.status);
         }
+
+        const datos = await respuesta.json();
+
+        if (!datos || datos.length === 0) {
+            contenido.innerHTML = '<div class="error">No hay datos para mostrar.</div>';
+            estado.textContent = "Sin datos";
+            return;
+        }
+
+        renderizarMatriz(datos);
+
+        estado.textContent = `Última actualización: ${fecha} - ${turno}`;
+
+    } catch (error) {
+        contenido.innerHTML = '<div class="error">Error cargando datos: ' + error.message + '</div>';
+        estado.textContent = "Error";
+    }
+}
 
         function valorMostrar(fila) {
             if (fila.ValorNum !== null && fila.ValorNum !== undefined) {
