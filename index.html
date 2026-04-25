@@ -158,12 +158,44 @@
 .grupo-body {
     padding: 10px;
 }
+ .contenedor-bloques {
+    background: #f3f4f6;
+    padding: 15px;
+    margin: 15px;
+    border-radius: 10px;
+}
+
+.linea-roja {
+    height: 5px;
+    background: #d90429;
+    margin-bottom: 10px;
+}
+    .header-titulo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    height: 50px;
+}
+
+.subtitulo {
+    font-size: 12px;
+    opacity: 0.7;
+}
     </style>
 </head>
 
 <body>
     <header>
+        <div class="header-titulo">
+    <img src="logo.png" class="logo">
+    <div>
         <h1>Monitor de Producción</h1>
+        <div class="subtitulo">Control de calidad de proceso - Planta</div>
+    </div>
+</div>
         <div class="subtitulo">Control de calidad de proceso - Planta</div>
     </header>
 
@@ -214,9 +246,11 @@
 <button class="btn-grupo" onclick="toggleGrupo(this, 'ENSAQUE')">ENSAQUE</button>
 </div>       
 
-        <div id="contenido"></div>
+        <div class="contenedor-bloques">
+    <div class="linea-roja"></div>
+    <div id="contenido">
     </div>
-
+</div>
     <script>
 async function cargarDatos() {
     const estado = document.getElementById("estado");
