@@ -138,6 +138,26 @@
     background: #2563eb;
     color: white;
 }
+ .grupo {
+    margin-bottom: 24px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background: white;
+}
+
+.grupo-header {
+    background: #1e3a8a;
+    color: white;
+    padding: 12px 16px;
+    font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.grupo-body {
+    padding: 10px;
+}
     </style>
 </head>
 
@@ -367,7 +387,9 @@ async function cargarDatosDesdeFiltros() {
             let html = "";
 
             Object.keys(grupos).forEach(grupo => {
-                html += `<div class="grupo" data-grupo="${grupo}">`;
+                html += `<div class="grupo" data-grupo="${grupo}">
+                <div class="grupo-header">${grupo}</div>
+                <div class="grupo-body">`;
                 html += `<h2>${grupo}</h2>`;
                 html += `<table>`;
                 html += `<thead><tr>`;
@@ -404,7 +426,7 @@ async function cargarDatosDesdeFiltros() {
                     html += `</tr>`;
                 });
 
-                html += `</tbody></table></div>`;
+                html += `</tbody></table></div></div>`;
             });
 
             contenido.innerHTML = html;
