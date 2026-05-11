@@ -427,6 +427,16 @@
     const grupos = {};
 
     datos.forEach(fila => {
+        if (
+    fila.Grupo === "ENSAQUE" &&
+    [
+        "TarimasProcesadas",
+        "PesoDeSacos",
+        "TempHarina_RbtDir"
+    ].includes(fila.Parametro)
+) {
+    return;
+}
         if (!grupos[fila.Grupo]) {
             grupos[fila.Grupo] = {
                 horasMap: new Map(),
