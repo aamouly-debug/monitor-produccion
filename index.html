@@ -518,16 +518,16 @@
 }
 
         function formatearHora(hora) {
-            if (!hora) return "";
+    if (!hora) return "";
 
-            const texto = String(hora);
+    const texto = hora.toString();
 
-            if (texto.includes("T")) {
-                return texto.split("T")[1].substring(0, 5);
-            }
+    if (texto.includes(":")) {
+        return texto.substring(0, 5);
+    }
 
-            return texto.substring(0, 5);
-        }
+    return texto;
+}
 
         function toggleGrupo(btn, nombreGrupo) {
             const bloques = document.querySelectorAll(`[data-grupo="${nombreGrupo}"]`);
