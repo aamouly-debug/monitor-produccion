@@ -415,71 +415,82 @@
             return "";
         }
 
-        function renderizarMatriz(datos) {
-            const contenido = document.getElementById("contenido");
+       function renderizarMatriz(datos) {
+    const contenido = document.getElementById("contenido");
 
-            datos.sort((a, b) =>
-                (a.ORDENGRUPO ?? 999) - (b.ORDENGRUPO ?? 999) ||
-                (a.secuencia ?? 9999) - (b.secuencia ?? 9999) ||
-                (a.NroOrden ?? 9999) - (b.NroOrden ?? 9999)
-            );
+    datos.sort((a, b) =>
+        (a.ORDENGRUPO ?? 999) - (b.ORDENGRUPO ?? 999) ||
+        (a.secuencia ?? 9999) - (b.secuencia ?? 9999) ||
+        (a.NroOrden ?? 9999) - (b.NroOrden ?? 9999)
+    );
 
-            const horasMap = new Map();
+    const grupos = {};
 
-            datos.forEach(d => {
-                if (d.NroOrden !== null && d.NroOrden !== undefined) {
-                    if (!horasMap.has(Number(d.NroOrden))) {
-                        horasMap.set(Number(d.NroOrden), d.Hora_Registro);
-                    }
-                }
-            });
+    datos.forEach(fila => {
+        if (!grupos[fila.Grupo]) {
+            grupos[fila.Grupo] = {
+                horasMap: new Map(),
+                parametros: {},
+                ordenGrupo: fila.ORDENGRUPO ?? 999
+            };
+        }
+
+        if (fila.NroOrden !== null && fila.NroOrden !== undefined) {
+            const nro = Number(fila.NroOrden);
+
+            if (!grupos[fila.Grupo].horasMap.has(nro)) {
+                grupos[fila.Grupo].horasMap.set(nro, fila.Hora_Registro);
+            }
+        }
+
+        if (!grupos[fila.Grupo].parametros[fila.Parametro]) {
+            grupos[fila.Grupo].parametros[fila.Parametro] = {
+                unidad: fila.Unidad,
+                min: fila.Ref_Min,
+                max: fila.Ref_Max,
+                valores: {},
+                orden: fila.secuencia ?? 9999
+            };
+        }
+
+        grupos[fila.Grupo].parametros[fila.Parametro].valores[Number(fila.NroOrden)] = fila;
+    });
+
+    let html = "";
+
+    Object.keys(grupos)
+        .sort((a, b) => grupos[a].ordenGrupo - grupos[b].ordenGrupo)
+        .forEach(grupo => {
+            const grupoData = grupos[grupo];
 
             const horas = [];
             for (let i = 1; i <= 12; i++) {
-                horas.push([i, horasMap.get(i) || ""]);
+                horas.push([i, grupoData.horasMap.get(i) || ""]);
             }
 
-            const grupos = {};
+            html += `<div class="grupo" data-grupo="${grupo}">`;
+            html += `<div class="grupo-header">${grupo}</div>`;
+            html += `<div class="grupo-body">`;
+            html += `<table>`;
+            html += `<thead><tr>`;
+            html += `<th class="col-parametro">Parámetro</th>`;
+            html += `<th class="col-unidad">Unidad</th>`;
+            html += `<th class="col-min">Min</th>`;
+            html += `<th class="col-max">Max</th>`;
 
-            datos.forEach(fila => {
-                if (!grupos[fila.Grupo]) {
-                    grupos[fila.Grupo] = {};
-                }
-
-                if (!grupos[fila.Grupo][fila.Parametro]) {
-                    grupos[fila.Grupo][fila.Parametro] = {
-                        unidad: fila.Unidad,
-                        min: fila.Ref_Min,
-                        max: fila.Ref_Max,
-                        valores: {},
-                        orden: fila.secuencia
-                    };
-                }
-
-                grupos[fila.Grupo][fila.Parametro].valores[Number(fila.NroOrden)] = fila;
+            horas.forEach(([nro, hora]) => {
+                html += `<th class="col-hora">${formatearHora(hora)}</th>`;
             });
 
-            let html = "";
+            html += `</tr></thead><tbody>`;
 
-            Object.keys(grupos).forEach(grupo => {
-                html += `<div class="grupo" data-grupo="${grupo}">`;
-                html += `<div class="grupo-header">${grupo}</div>`;
-                html += `<div class="grupo-body">`;
-                html += `<table>`;
-                html += `<thead><tr>`;
-                html += `<th class="col-parametro">Parámetro</th>`;
-                html += `<th class="col-unidad">Unidad</th>`;
-                html += `<th class="col-min">Min</th>`;
-                html += `<th class="col-max">Max</th>`;
-
-                horas.forEach(([nro, hora]) => {
-                    html += `<th class="col-hora">${formatearHora(hora)}</th>`;
-                });
-
-                html += `</tr></thead><tbody>`;
-
-                Object.keys(grupos[grupo]).forEach(parametro => {
-                    const item = grupos[grupo][parametro];
+            Object.keys(grupoData.parametros)
+                .sort((a, b) =>
+                    (grupoData.parametros[a].orden ?? 9999) -
+                    (grupoData.parametros[b].orden ?? 9999)
+                )
+                .forEach(parametro => {
+                    const item = grupoData.parametros[parametro];
 
                     html += `<tr>`;
                     html += `<td class="parametro">${parametro}</td>`;
@@ -500,11 +511,11 @@
                     html += `</tr>`;
                 });
 
-                html += `</tbody></table></div></div>`;
-            });
+            html += `</tbody></table></div></div>`;
+        });
 
-            contenido.innerHTML = html;
-        }
+    contenido.innerHTML = html;
+}
 
         function formatearHora(hora) {
             if (!hora) return "";
