@@ -517,13 +517,18 @@
     contenido.innerHTML = html;
 }
 
-        function formatearHora(hora) {
+  function formatearHora(hora) {
     if (!hora) return "";
 
-    const texto = hora.toString();
+    const texto = String(hora);
 
-    if (texto.includes(":")) {
-        return texto.substring(0, 5);
+    if (texto.includes("T")) {
+        return texto.split("T")[1].substring(0, 5);
+    }
+
+    const match = texto.match(/(\d{2}:\d{2})/);
+    if (match) {
+        return match[1];
     }
 
     return texto;
